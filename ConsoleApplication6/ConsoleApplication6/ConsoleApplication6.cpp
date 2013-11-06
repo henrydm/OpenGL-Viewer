@@ -1,8 +1,8 @@
 
-#include <stdafx.h>
+#include "stdafx.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
-#include <gl/glut.h>
+#include <GL\glut.h>
 
 
 GLfloat anguloCuboX = 0.0f;
