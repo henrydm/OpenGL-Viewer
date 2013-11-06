@@ -22,7 +22,7 @@ GLint _rotationVerticalStep =0;
 GLint _rotationHrizontalStep =0;
 
 GLfloat VerticalSteps=0;
-GLfloat LateralSteps=0;
+GLfloat HorizontalSteps=0;
 
 
 GLfloat _cameraAngle =60.0f;
@@ -122,42 +122,37 @@ void drawPlane(void)
 }
 void display()
 {
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
 
-	glTranslatef(0.0f, 0.0f, -5.0f);
-
-	//rotation
-	glLoadIdentity();
-
 	float rotationVertical = 360.0f/(float)_steps;	
 	rotationVertical *=(float)_rotationVerticalStep;
-
-	glRotatef(rotationVertical, 1.0f, 0.0f, 0.0f);
-
-
 	float rotationHorizontal = 360.0f/(float)_steps;
 	rotationHorizontal *=(float)_rotationHrizontalStep;
 
-
-	glRotatef(rotationHorizontal, 0.0f, 1.0f, 0.0f);
-
-
+	//plane
+	glLoadIdentity();
 	glTranslatef(0.0f, VerticalSteps, 0.0f);
+	glTranslatef(HorizontalSteps, 0.0f, 0.0f);
 
+	glTranslatef(0.0f, 0.0f, -5.0f);
+
+	glRotatef(rotationVertical, 1.0f, 0.0f, 0.0f);
+	glRotatef(rotationHorizontal, 0.0f, 1.0f, 0.0f);
 
 	drawPlane();
 
 
+	//Cube same tranforms plus rotation
 	//glRotatef(anguloCuboX, 1.0f, 0.0f, 0.0f);
 	glRotatef(anguloCuboY, 0.0f, 1.0f, 0.0f);
-
-
-
 	drawCube();
 
+	//reset matrix and set sphere
 	glLoadIdentity();
+
+	glTranslatef( 0.0f,VerticalSteps, 0.0f);
+	glTranslatef(HorizontalSteps, 0.0f, 0.0f);
 
 	glTranslatef(0.0f, 0.0f, -5.0f);
 	glRotatef(rotationVertical, 1.0f, 0.0f, 0.0f);
@@ -165,8 +160,8 @@ void display()
 
 	glRotatef(anguloEsfera, 0.0f, 1.0f, 0.0f);
 	glTranslatef(3.0f, 0.0f, 0.0f);
-	glTranslatef( 0.0f,VerticalSteps, 0.0f);
-	
+
+
 
 	glColor3f(1.0f, 0.0f, 0.5f);
 	glutWireSphere(0.5f, 8, 8);
@@ -245,21 +240,27 @@ void keyboard(unsigned char key, int x, int y)
 			VerticalSteps+=1;
 		else
 			_rotationVerticalStep-=1;
-		
+
 		reshape(ancho,alto);
 		break;
 
 
-
-
 	case 'a': //Rotate Left
-		_rotationHrizontalStep+=1;
+		if (_translationMoveMode)
+			HorizontalSteps-=1;
+		else
+			_rotationHrizontalStep+=1;
+
 		//upUnints+=1.0f;
 		reshape(ancho,alto);
 		break;
 
 	case 'd'://Rotate right
-		_rotationHrizontalStep-=1;
+		if (_translationMoveMode)
+			HorizontalSteps+=1;
+		else
+			_rotationHrizontalStep-=1;
+
 		reshape(ancho,alto);
 		break;
 
