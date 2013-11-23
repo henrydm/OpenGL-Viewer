@@ -1,32 +1,26 @@
-
 #include "stdafx.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <GL\glut.h>
 
 
-GLfloat anguloCuboX = 0.0f;
-GLfloat anguloCuboY = 0.0f;
-GLfloat anguloEsfera = 0.0f;
-
-GLint ancho=400;
-GLint alto=400;
 bool _translationMoveMode = false;
-int hazPerspectiva = 0;
+bool _prespective = 0;
+GLint width=400;
+GLint heigth=400;
 GLfloat upUnints=0.0f;
 GLfloat rightUnits = 0.0f;
 GLfloat _totalHeigth = 10.0f;
+GLfloat anguloCuboX = 0.0f;
+GLfloat anguloCuboY = 0.0f;
+GLfloat anguloEsfera = 0.0f;
 GLint _steps= 200;
-
-GLint _rotationVerticalStep =0;
+GLint _rotationVerticalStep =15;
 GLint _rotationHrizontalStep =0;
-
-GLfloat VerticalSteps=0;
+GLfloat VerticalSteps=-1;
 GLfloat HorizontalSteps=0;
-
-
 GLfloat _cameraAngle =60.0f;
-GLdouble _zoom=4.0f;
+GLdouble _zoom=6.0f;
 
 
 
@@ -36,30 +30,23 @@ void reshape(int width, int height)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
-
-	if(hazPerspectiva)
+	if(_prespective)
 	{
-
 		gluPerspective(_cameraAngle, (GLfloat)width/(GLfloat)height, 1.0f, 20.0f);
-
 	}
 	else
 	{
 		glOrtho(-_zoom,_zoom, -_zoom, _zoom, -20, 20);
 	}
 
-
-
 	glMatrixMode(GL_MODELVIEW);
 
-	ancho = width;
-	alto = height;
 }
 
 void drawCube(void)
 {
 	glColor3f(1.0f, 0.0f, 0.0f);
-	glBegin(GL_QUADS);       //cara frontal
+	glBegin(GL_QUADS);       //front side
 	glVertex3f(-1.0f, -1.0f,  1.0f);
 	glVertex3f( 1.0f, -1.0f,  1.0f);
 	glVertex3f( 1.0f,  1.0f,  1.0f);
@@ -69,7 +56,7 @@ void drawCube(void)
 
 	glColor3f(0.0f, 1.0f, 0.0f);
 
-	glBegin(GL_QUADS);       //cara trasera
+	glBegin(GL_QUADS);       //back side
 	glVertex3f( 1.0f, -1.0f, -1.0f);
 	glVertex3f(-1.0f, -1.0f, -1.0f);
 	glVertex3f(-1.0f,  1.0f, -1.0f);
@@ -78,7 +65,7 @@ void drawCube(void)
 	glEnd();
 
 	glColor3f(0.0f, 0.0f, 1.0f);
-	glBegin(GL_QUADS);       //cara lateral izq
+	glBegin(GL_QUADS);       //up left side
 	glVertex3f(-1.0f,-1.0f, -1.0f);
 	glVertex3f(-1.0f,-1.0f,  1.0f);
 	glVertex3f(-1.0f, 1.0f,  1.0f);
@@ -86,7 +73,7 @@ void drawCube(void)
 	glEnd();
 
 	glColor3f(1.0f, 1.0f, 0.0f);
-	glBegin(GL_QUADS);       //cara lateral dcha
+	glBegin(GL_QUADS);       //up right side
 	glVertex3f(1.0f, -1.0f,  1.0f);
 	glVertex3f(1.0f, -1.0f, -1.0f);
 	glVertex3f(1.0f,  1.0f, -1.0f);
@@ -94,7 +81,7 @@ void drawCube(void)
 	glEnd(); 
 
 	glColor3f(0.0f,      1.0f, 1.0f);
-	glBegin(GL_QUADS);       //cara arriba
+	glBegin(GL_QUADS);       //up side
 	glVertex3f(-1.0f, 1.0f,  1.0f);
 	glVertex3f( 1.0f, 1.0f,  1.0f);
 	glVertex3f( 1.0f, 1.0f, -1.0f);
@@ -102,7 +89,7 @@ void drawCube(void)
 	glEnd();
 
 	glColor3f(1.0f, 0.0f, 1.0f);
-	glBegin(GL_QUADS);       //cara abajo
+	glBegin(GL_QUADS);       //back side
 	glVertex3f( 1.0f,-1.0f, -1.0f);
 	glVertex3f( 1.0f,-1.0f,  1.0f);
 	glVertex3f(-1.0f,-1.0f,  1.0f);
@@ -161,17 +148,10 @@ void display()
 	glRotatef(anguloEsfera, 0.0f, 1.0f, 0.0f);
 	glTranslatef(3.0f, 0.0f, 0.0f);
 
-
+	
 
 	glColor3f(1.0f, 0.0f, 0.5f);
 	glutWireSphere(0.5f, 8, 8);
-
-
-	/*glRotatef(rotationVertical, 1.0f, 0.0f, 0.0f);
-	glRotatef(rotationHorizontal, 0.0f, 1.0f, 0.0f);
-	glTranslatef(VerticalSteps, 0.0f, 0.0f);*/
-	//glTranslatef(0.0f, 1.0f, 0.0f);
-	//glRotatef(rotation,1.0f,0.0f,0.0f);
 
 	glFlush();
 	glutSwapBuffers();
@@ -179,14 +159,16 @@ void display()
 	anguloCuboX+=0.1f;
 	anguloCuboY+=0.1f;
 	anguloEsfera-=0.2f;
+
+	glutPostRedisplay();
 }
 
 void init()
 {
 	glClearColor(0,0,0,0);
 	glEnable(GL_DEPTH_TEST);
-	ancho = 400;
-	alto = 400;
+	width = 400;
+	heigth = 400;
 }
 
 
@@ -198,20 +180,12 @@ void idle()
 void keyboard(unsigned char key, int x, int y)
 {
 
-
-
 	switch(key)
 	{
 	case 'p':
 	case 'P':
-		hazPerspectiva=1;
-		reshape(ancho,alto);
-		break;
-
-	case 'o':
-	case 'O':
-		hazPerspectiva=0;
-		reshape(ancho,alto);
+		_prespective=!_prespective;
+		reshape(width,heigth);
 		break;
 
 	case 27:   // escape
@@ -227,41 +201,31 @@ void keyboard(unsigned char key, int x, int y)
 	case 's': //Rotate down
 
 		if (_translationMoveMode)
-			VerticalSteps-=1;
-
+			VerticalSteps+=0.25;
 		else
-			_rotationVerticalStep+=1;
-		//upUnints+=1.0f;
-		reshape(ancho,alto);
+			_rotationVerticalStep-=1;
 		break;
 
 	case 'w'://Rotate up
 		if (_translationMoveMode)
-			VerticalSteps+=1;
+			VerticalSteps-=0.25;
 		else
-			_rotationVerticalStep-=1;
-
-		reshape(ancho,alto);
+			_rotationVerticalStep+=1;
 		break;
 
 
 	case 'a': //Rotate Left
 		if (_translationMoveMode)
-			HorizontalSteps-=1;
+			HorizontalSteps+=0.25;
 		else
 			_rotationHrizontalStep+=1;
-
-		//upUnints+=1.0f;
-		reshape(ancho,alto);
 		break;
 
 	case 'd'://Rotate right
 		if (_translationMoveMode)
-			HorizontalSteps+=1;
+			HorizontalSteps-=0.25;
 		else
 			_rotationHrizontalStep-=1;
-
-		reshape(ancho,alto);
 		break;
 
 
@@ -269,31 +233,39 @@ void keyboard(unsigned char key, int x, int y)
 	case 'm'://zoom out
 		_cameraAngle+=1;
 		_zoom+=1;
-		reshape(ancho,alto);
+		reshape(width,heigth);
 		break;
 
 	case 'k'://zoom in
 		_cameraAngle-=1;
 		_zoom-=1;
-		reshape(ancho,alto);
+		reshape(width,heigth);
 		break;
 
 	}
 
 
 }
-
+void keyDown(unsigned char key, int x, int y)
+{
+}
+void keyUp(unsigned char key, int x, int y)
+{
+}
 int main(int argc, char **argv)
 {
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(ancho, alto);
-	glutCreateWindow("Cubo 1");
+	glutInitWindowSize(width, heigth);
+	glutCreateWindow("OpenGL");
 	init();
+	//glutIgnoreKeyRepeat(1);
+	//glutKeyboardFunc(keyDown);
+	//glutKeyboardUpFunc(keyUp);
 	glutDisplayFunc(display);
 	glutReshapeFunc(reshape);
-	glutIdleFunc(idle);
+	//glutIdleFunc(idle);
 	glutKeyboardFunc(keyboard);
 	glutMainLoop();
 	return 0;
